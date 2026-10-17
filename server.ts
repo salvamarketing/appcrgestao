@@ -237,9 +237,9 @@ function writeDatabase(data: any) {
   }
 }
 
-async function startServer() {
-  const app = express();
+export const app = express();
 
+async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
@@ -1747,9 +1747,13 @@ Serviço certificado com 90 (noventa) dias de garantia técnica CR Serviços Ger
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`CR Serviços Gerais Server running on http://0.0.0.0:${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`CR Serviços Gerais Server running on http://0.0.0.0:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+export default app;
