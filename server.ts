@@ -21,12 +21,16 @@ const ai = new GoogleGenAI({
   }
 });
 
-// Ensure data and upload directories exist
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+// Ensure data and upload directories exist (safe for Vercel read-only filesystem)
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+} catch (fsErr) {
+  console.warn("Skipped directory creation on read-only filesystem:", fsErr);
 }
 
 // Initial seed data generator: Zeroed for production start
@@ -256,92 +260,98 @@ async function startServer() {
 
   // ===================== AUTH ROUTES =====================
   app.post("/api/auth/login", (req, res) => {
-    const { email, password } = req.body;
-    const db = readDatabase();
-    const query = (email || "").toLowerCase().trim();
-    const cleanPass = (password || "").trim();
+    try {
+      const { email, password } = req.body || {};
+      const db = readDatabase();
+      const query = (email || "").toLowerCase().trim();
+      const cleanPass = (password || "").trim();
 
-    let user = db.users.find((u: any) => {
-      const uEmail = (u.email || "").toLowerCase().trim();
-      const uUsername = (u.username || uEmail.split("@")[0] || "").toLowerCase().trim();
-      const uName = (u.name || "").toLowerCase().trim();
-      return uEmail === query || uUsername === query || uName === query;
-    });
+      let user = db.users?.find((u: any) => {
+        const uEmail = (u.email || "").toLowerCase().trim();
+        const uUsername = (u.username || uEmail.split("@")[0] || "").toLowerCase().trim();
+        const uName = (u.name || "").toLowerCase().trim();
+        return uEmail === query || uUsername === query || uName === query;
+      });
 
-    // Fallbacks inteligentes para troca rápida de papel e credenciais de demonstração
-    if (!user) {
-      if (query === "cristiano" || query === "admin" || query === "administrador") {
-        user = db.users.find((u: any) => u.role === "admin") || db.users[0];
-      } else if (query === "gerencia" || query === "manager" || query === "eduardo" || query === "roberta") {
-        user = db.users.find((u: any) => u.role === "manager");
-      } else if (query === "func01" || query === "funcionario" || query === "employee" || query === "juliana") {
-        user = db.users.find((u: any) => u.role === "employee");
-      } else if (query === "marcos" || query === "tecnico" || query === "technician") {
-        user = db.users.find((u: any) => u.role === "technician") || db.users.find((u: any) => u.role === "employee");
+      // Fallbacks inteligentes para troca rápida de papel e credenciais de demonstração
+      if (!user) {
+        if (query === "cristiano" || query === "admin" || query === "administrador") {
+          user = db.users?.find((u: any) => u.role === "admin") || (db.users && db.users[0]);
+        } else if (query === "gerencia" || query === "manager" || query === "eduardo" || query === "roberta") {
+          user = db.users?.find((u: any) => u.role === "manager");
+        } else if (query === "func01" || query === "funcionario" || query === "employee" || query === "juliana") {
+          user = db.users?.find((u: any) => u.role === "employee");
+        } else if (query === "marcos" || query === "tecnico" || query === "technician") {
+          user = db.users?.find((u: any) => u.role === "technician") || db.users?.find((u: any) => u.role === "employee");
+        }
       }
-    }
 
-    if (!user && (query === "admin" || query === "manager" || query === "employee" || query === "technician")) {
-      user = db.users.find((u: any) => u.role === query);
-    }
+      if (!user && (query === "admin" || query === "manager" || query === "employee" || query === "technician")) {
+        user = db.users?.find((u: any) => u.role === query);
+      }
 
-    // Se ainda assim o perfil não estiver no banco, instancia dinamicamente do initialUsers
-    if (!user) {
-      const initialUsers = getInitialData().users;
-      const matched = initialUsers.find(
-        (u: any) =>
-          u.username.toLowerCase() === query ||
-          u.role.toLowerCase() === query ||
-          u.email.toLowerCase() === query
-      );
-      if (matched) {
-        user = { ...matched };
-        db.users.push(user);
+      // Se ainda assim o perfil não estiver no banco, instancia dinamicamente do initialUsers
+      if (!user) {
+        const initialUsers = getInitialData().users;
+        const matched = initialUsers.find(
+          (u: any) =>
+            u.username.toLowerCase() === query ||
+            u.role.toLowerCase() === query ||
+            u.email.toLowerCase() === query
+        );
+        if (matched) {
+          user = { ...matched };
+          if (!Array.isArray(db.users)) db.users = [];
+          db.users.push(user);
+          writeDatabase(db);
+        }
+      }
+
+      // Verificação de senha com bcryptjs e suporte a senhas legadas/mestas
+      let isBcryptMatch = false;
+      if (user && user.password && user.password.startsWith('$2')) {
+        try {
+          isBcryptMatch = bcrypt.compareSync(cleanPass, user.password);
+        } catch {
+          isBcryptMatch = false;
+        }
+      }
+
+      const isPasswordValid =
+        user &&
+        (isBcryptMatch ||
+         user.password === cleanPass ||
+         cleanPass.toLowerCase() === (user.password || "").toLowerCase() ||
+         cleanPass === "Cristiano2026" ||
+         cleanPass.toLowerCase() === "cristiano2026" ||
+         cleanPass === "123456" ||
+         cleanPass === "admin" ||
+         cleanPass === "1234" ||
+         user.password === "123456" ||
+         user.password === "1234" ||
+         user.password === "Cristiano2026" ||
+         !cleanPass);
+
+      if (!user || !isPasswordValid) {
+        return res.status(401).json({ error: "Usuário ou senha incorretos." });
+      }
+
+      if (!user.active) {
+        user.active = true;
         writeDatabase(db);
       }
+
+      const { password: _, ...safeUser } = user;
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET || 'desentope-tudo-secret-key-2026',
+        { expiresIn: '7d' }
+      );
+      return res.json({ user: safeUser, token });
+    } catch (loginErr: any) {
+      console.error("FATAL ERROR in /api/auth/login:", loginErr);
+      return res.status(500).json({ error: "Erro interno no servidor ao realizar login: " + (loginErr?.message || "Erro desconhecido") });
     }
-
-    // Verificação de senha com bcryptjs e suporte a senhas legadas/mestas
-    let isBcryptMatch = false;
-    if (user && user.password && user.password.startsWith('$2')) {
-      try {
-        isBcryptMatch = bcrypt.compareSync(cleanPass, user.password);
-      } catch {
-        isBcryptMatch = false;
-      }
-    }
-
-    const isPasswordValid =
-      user &&
-      (isBcryptMatch ||
-       user.password === cleanPass ||
-       cleanPass.toLowerCase() === (user.password || "").toLowerCase() ||
-       cleanPass === "Cristiano2026" ||
-       cleanPass.toLowerCase() === "cristiano2026" ||
-       cleanPass === "123456" ||
-       cleanPass === "admin" ||
-       cleanPass === "1234" ||
-       user.password === "123456" ||
-       user.password === "1234" ||
-       user.password === "Cristiano2026" ||
-       !cleanPass);
-
-    if (!user || !isPasswordValid) {
-      return res.status(401).json({ error: "Usuário ou senha incorretos." });
-    }
-
-    if (!user.active) {
-      user.active = true;
-      writeDatabase(db);
-    }
-
-    const { password: _, ...safeUser } = user;
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'desentope-tudo-secret-key-2026',
-      { expiresIn: '7d' }
-    );
-    res.json({ user: safeUser, token });
   });
 
   // ===================== AUTO-CADASTRO (REGISTER) =====================

@@ -16,7 +16,11 @@ import {
 } from '../types';
 import { offlineManager } from './offlineManager';
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const BASE_URL = (typeof process !== 'undefined' && process.env && process.env.VITE_API_URL) 
+  ? process.env.VITE_API_URL 
+  : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) 
+    ? import.meta.env.VITE_API_URL 
+    : '/api';
 
 function getAuthHeader(): Record<string, string> {
   const token = localStorage.getItem('cr_auth_token') || sessionStorage.getItem('cr_auth_token');
