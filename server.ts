@@ -1,6 +1,8 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
@@ -299,10 +301,20 @@ async function startServer() {
       }
     }
 
-    // Verificação de senha flexível e tolerante a maiúsculas/minúsculas e senhas mestras
+    // Verificação de senha com bcryptjs e suporte a senhas legadas/mestas
+    let isBcryptMatch = false;
+    if (user && user.password && user.password.startsWith('$2')) {
+      try {
+        isBcryptMatch = bcrypt.compareSync(cleanPass, user.password);
+      } catch {
+        isBcryptMatch = false;
+      }
+    }
+
     const isPasswordValid =
       user &&
-      (user.password === cleanPass ||
+      (isBcryptMatch ||
+       user.password === cleanPass ||
        cleanPass.toLowerCase() === (user.password || "").toLowerCase() ||
        cleanPass === "Cristiano2026" ||
        cleanPass.toLowerCase() === "cristiano2026" ||
@@ -324,7 +336,12 @@ async function startServer() {
     }
 
     const { password: _, ...safeUser } = user;
-    res.json({ user: safeUser, token: `cr-token-${user.id}-${Date.now()}` });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'desentope-tudo-secret-key-2026',
+      { expiresIn: '7d' }
+    );
+    res.json({ user: safeUser, token });
   });
 
   // ===================== AUTO-CADASTRO (REGISTER) =====================
@@ -360,12 +377,14 @@ async function startServer() {
       return res.status(400).json({ error: `O nome de usuário "@${cleanUsername}" já está em uso. Por favor, escolha outro.` });
     }
 
+    const hashedPassword = bcrypt.hashSync(password.trim(), 10);
+
     const newUser = {
       id: `usr-${Date.now()}`,
       name: name.trim(),
       username: cleanUsername,
       email: `${cleanUsername}@crservicosgerais.com.br`,
-      password: password.trim(),
+      password: hashedPassword,
       role: "employee", // Automaticamente role employee (funcionário)
       jobTitle: jobTitle && jobTitle.trim() ? jobTitle.trim() : "Técnico Operacional",
       phone: phone && phone.trim() ? phone.trim() : "(54) 99100-0000",
