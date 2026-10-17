@@ -1,0 +1,6 @@
+{
+  "name": "CR Serviços Gerais - Painel Operacional",
+  "description": "Sistema interno de gestão operacional e financeira exclusiva da CR Serviços Gerais.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

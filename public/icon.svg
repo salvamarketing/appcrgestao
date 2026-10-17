@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="iconBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329" />
+      <stop offset="50%" stop-color="#080e1e" />
+      <stop offset="100%" stop-color="#050811" />
+    </linearGradient>
+
+    <!-- Royal Blue Gradient -->
+    <linearGradient id="crBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0062e3" />
+      <stop offset="50%" stop-color="#004ecc" />
+      <stop offset="100%" stop-color="#002d8f" />
+    </linearGradient>
+
+    <!-- Cyan Highlight -->
+    <linearGradient id="crCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Wrench Highlight -->
+    <linearGradient id="toolCyan" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+
+    <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0284c7" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- App Icon Card Background -->
+  <rect width="512" height="512" rx="112" fill="url(#iconBg)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#1e293b" stroke-width="6"/>
+
+  <!-- Logo Group -->
+  <g transform="translate(16, 42) scale(0.72)" filter="url(#glowEffect)">
+    <!-- Letter C -->
+    <path d="M 235 152 C 228 108, 195 72, 142 72 C 80 72, 35 125, 35 210 C 35 295, 80 348, 142 348 C 198 348, 230 312, 238 266 L 176 250 C 170 274, 155 296, 138 296 C 106 296, 88 260, 88 210 C 88 160, 106 124, 138 124 C 156 124, 170 144, 175 168 Z"
+          fill="url(#crBlue)" stroke="#001f66" stroke-width="6" stroke-linejoin="round" />
+    <path d="M 235 152 C 228 108, 195 72, 142 72 C 80 72, 35 125, 35 210 C 35 155, 80 82, 142 82 C 192 82, 222 116, 231 154 Z"
+          fill="url(#crCyan)" opacity="0.65" />
+
+    <!-- Letter R -->
+    <path d="M 245 76 L 345 76 C 382 76, 408 98, 408 142 C 408 178, 385 200, 350 206 L 420 344 L 360 344 L 298 220 L 298 344 L 245 344 Z M 298 122 L 298 176 L 338 176 C 354 176, 365 166, 365 148 C 365 132, 354 122, 338 122 Z"
+          fill="url(#crBlue)" stroke="#001f66" stroke-width="6" stroke-linejoin="round" />
+    <path d="M 245 76 L 345 76 C 382 76, 408 98, 408 142 C 408 118, 375 84, 342 84 L 252 84 L 252 76 Z"
+          fill="url(#crCyan)" opacity="0.75" />
+
+    <!-- Bracket -->
+    <path d="M 450 162 L 476 162 L 476 178 L 490 178 L 490 102 C 490 68, 510 52, 546 52 L 590 52 L 590 74 L 548 74 C 528 74, 516 82, 516 102 L 516 178 L 528 178 L 528 162 L 552 162 L 552 186 L 538 186 L 538 274 C 538 316, 566 338, 614 338 C 650 338, 672 320, 672 284 L 672 242 L 692 242 L 692 286 C 692 336, 658 358, 610 358 C 544 358, 512 324, 512 268 L 512 186 L 450 186 Z"
+          fill="url(#crBlue)" stroke="#00184d" stroke-width="4" stroke-linejoin="round" />
+
+    <!-- Wrench -->
+    <g transform="translate(485, 95)">
+      <path d="M 126 124 L 65 185 C 55 195, 55 212, 65 222 C 76 232, 92 232, 102 222 L 164 160 C 178 170, 196 174, 215 168 C 226 164, 238 156, 246 146 L 204 124 C 196 120, 190 110, 192 100 C 194 90, 202 82, 212 80 L 240 76 C 232 58, 218 45, 200 40 C 172 32, 145 44, 132 68 C 126 80, 126 94, 130 106 L 126 124 Z"
+            fill="url(#toolCyan)" stroke="#002d8f" stroke-width="4" stroke-linejoin="round" />
+    </g>
+  </g>
+
+  <!-- Brand Subtext -->
+  <text x="256" y="435" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="3">CR SERVIÇOS</text>
+  <text x="256" y="470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="19" fill="#38bdf8" text-anchor="middle" letter-spacing="2">GESTÃO OPERACIONAL 24H</text>
+</svg>

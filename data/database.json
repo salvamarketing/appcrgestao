@@ -1,0 +1,80 @@
+{
+  "users": [
+    {
+      "id": "usr-1",
+      "name": "Cristiano Ramos",
+      "username": "Cristiano",
+      "email": "cristiano@crservicosgerais.com.br",
+      "password": "Cristiano2026",
+      "role": "admin",
+      "jobTitle": "Administrador / Gerência Geral",
+      "phone": "(54) 99622-4098",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00Z"
+    },
+    {
+      "id": "usr-manager",
+      "name": "Roberta Silveira",
+      "username": "gerencia",
+      "email": "gerencia@crservicosgerais.com.br",
+      "password": "123456",
+      "role": "manager",
+      "jobTitle": "Gerente Operacional",
+      "phone": "(54) 99122-3344",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00Z"
+    },
+    {
+      "id": "usr-func01",
+      "name": "Juliana Mendes",
+      "username": "func01",
+      "email": "func01@crservicosgerais.com.br",
+      "password": "123456",
+      "role": "employee",
+      "jobTitle": "Atendimento & Recepção",
+      "phone": "(54) 99188-7766",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00Z"
+    },
+    {
+      "id": "usr-tech01",
+      "name": "Marcos Vinicius",
+      "username": "marcos",
+      "email": "marcos@crservicosgerais.com.br",
+      "password": "123456",
+      "role": "technician",
+      "jobTitle": "Técnico Especialista em Campo",
+      "phone": "(54) 99233-4455",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00Z"
+    }
+  ],
+  "locations": [],
+  "settings": {
+    "name": "CR Serviços Gerais",
+    "commercialName": "CR Manutenção e Serviços 24 Horas",
+    "cnpj": "42.891.304/0001-92",
+    "phone": "(54) 99622-4098",
+    "whatsapp": "5554996224098",
+    "email": "contato@crservicosgerais.com.br",
+    "address": "Av. Central das Flores, 1420",
+    "city": "Caxias do Sul",
+    "state": "RS",
+    "emergency24h": true,
+    "logoUrl": "/logo-cr.svg",
+    "warrantyDefault": "90 dias de garantia com laudo técnico certificado conforme Código de Defesa do Consumidor.",
+    "pixKey": "42.891.304/0001-92"
+  },
+  "technicians": [],
+  "customers": [],
+  "services": [],
+  "quotes": [],
+  "workOrders": [],
+  "financialTransactions": [],
+  "notifications": [],
+  "auditLogs": []
+}
